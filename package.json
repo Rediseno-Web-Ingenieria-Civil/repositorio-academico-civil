@@ -1,0 +1,27 @@
+{
+  "name": "repositorio",
+  "version": "1.0.0",
+  "description": "Repositorio académico Civil",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "eleventy --serve",
+    "build": "eleventy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tcardenasc/repositorio.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tcardenasc/repositorio/issues"
+  },
+  "homepage": "https://github.com/tcardenasc/repositorio#readme",
+  "dependencies": {
+    "@11ty/eleventy": "^2.0.1",
+    "html-minifier": "^4.0.0"
+  }
+}
