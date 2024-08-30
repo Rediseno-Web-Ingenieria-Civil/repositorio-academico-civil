@@ -1,7 +1,16 @@
 import pandas as pd
 from openpyxl import load_workbook
+import sys
+import argparse
 
 file_name = "src/data/DIC-UCHILE.xlsx"  # path to file + file name
+
+# Parse command line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument("--file", help="Path to the Excel file", default=file_name)
+args = parser.parse_args()
+
+file_name = args.file
 
 # Load the workbook and select the sheet
 wb = load_workbook(filename=file_name, data_only=True)
@@ -23,8 +32,11 @@ meses = [
     "Diciembre",
 ]
 
-ano_ini = 2022
+mes_inicial = "Enero" # @param ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
+ano_inicial = 2022 # @param {"type":"slider","min":2020,"max":2040,"step":1}
 
+mes_final = "Septiembre" # @param ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
+ano_final = 2024 # @param {"type":"slider","min":2020,"max":2040,"step":1}
 
 def check_sheet_name(sheet_name: str) -> bool:
     if sheet_name in allowed_sheets:
@@ -33,10 +45,10 @@ def check_sheet_name(sheet_name: str) -> bool:
     try:
         mes, ano = sheet_name.split(" ")
         if mes in meses:
-            if int(ano) >= ano_ini:
+            if int(ano) >= ano_inicial:
                 return True
             else:
-                print(f"{mes} {ano}: El año debe ser mayor o igual a {ano_ini}")
+                print(f"{mes} {ano}: El año debe ser mayor o igual a {ano_inicial}")
         else:
             print(
                 f"{mes} {ano}: El mes no está en la lista de meses, revisar que esté bien escrito"
