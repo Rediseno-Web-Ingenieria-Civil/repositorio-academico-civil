@@ -1,182 +1,66 @@
 ---
 layout: base.njk
-title: Rediseño Civil
+title: Repositorio academico
 ---
-
-{% set css %} {% include "style.css" %} {% endset %}
-<style>
-	{{ css | cssmin | safe }}
-</style>
-        <div class="tab__list" role="tablist">
-			<a data-toggle="tab" href="#completa" role="tab" >Jornada completa</a>
-			<a data-toggle="tab" href="#parcial" role="tab">Jornada parcial</a>
-			<a data-toggle="tab" href="#externa" role="tab">Externos</a>
-            <a data-toggle="tab" href="#search-academics" role="tab" class="active">Todos</a>
-		</div>
-
-
-{% for jornada in academicos %} 
-<div id={{jornada.id}} class="tab__item " role="tabpanel">
-
-	{% for esp in jornada.academicosesp %} 
-    <h3>{{esp.name}}</h3>
-    <br>
-    <div class="academic-container">
-    <div class="row">
-    {% for academico in esp.academicos %} 
-    
-	<div class="col-2">
-			
-		<div class="academic">
-        <div class="social-container">
-                <div class="img-container">
-                    <img class="photo-academic" src={{academico.img}} alt={{academico.nombre}}>
-                </div>
-        {% if (academico.lkd is defined and academico.lkd  != "") or (academico.web is defined and academico.web != "")%}
-        <div class="social-menu">
-        
-            <div class="social-li"><a href="{{academico.lkd}}">
-                <p class="lnkd-link" >in</p>
-            </a></div>
-            <div class="social-li" > <a href="{{academico.web}}">
-                <p class="web-link">&#9784;</p>
-            </a></div>
-        
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.5/css/dataTables.dataTables.css" />
+<div class="content__description" itemprop="description">
+    <div class="table-responsive">
+        <table id="tabla-repositorio">
+            <thead>
+                <tr>
+                    <th>
+                        Nombre de la publicación
+                    </th>
+                    <th>
+                        Autores
+                    </th>
+                    <th>
+                        Revista
+                    </th>
+                    <th>
+                        DOI
+                    </th>
+                    <th>
+                        Fecha de publicación
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ano, meses in repositorio_academico %}
+                    {% for mes, papers in meses %}
+                        {% for paper in papers %}
+                            <tr>
+                                <td>
+                                    <a href="{{ paper["LINK PUBLICACION"] }}">{{ paper["NOMBRE DE LA PUBLICACIÓN"] }}</a>
+                                </td>
+                                <td>
+                                    {% for autor in paper["AUTORES"] %}
+                                        {{ autor | trim }}<br>
+                                        {% endfor %}
+                                    </td>
+                                    <td>
+                                        <a href="{{ paper["LINK PUBLICADO EN"] }}">{{ paper["PUBLICADO EN"] }}</a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ paper["LINK DOI"] }}">{{ paper["DOI"] }}</a>
+                                    </td>
+                                    <td>
+                                        {{ paper["MES"] }}
+                                        {{ paper["ANO"] }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        {% endif %}
-        </div>
-        
-        <div class="name-academic">
-            {{academico.nombre}}
-        </div>
-        <br>
-        <div class="position-academic">
-            {{academico.posicion}}
-        </div>
-        <br>
-        <div class="phd-academic">
-            {{academico.phd}}
-        </div>
-        <br>
-        <div class="email-academic">
-            {{academico.email}}
-        </div>
-
     </div>
-			
-	
-    </div>
-    
-	{% endfor %}
-   
-    </div>
-    </div>
-    {% endfor %}
-</div>
-{% endfor %}
 
-<div id="search-academics" class="tab__item active" role="tabpanel">
-<div class="filter-name-academic">
-<input type="text" id="name-academic-filter"  placeholder="Buscar por nombre" title="Escribe">
-<button type="button" onclick="filterAcademic()">Buscar</button>
-</div>
-<div class="academic-container" id="search-academic-container">
-<div class="row" id="search-academic-row">
-{% for jornada in academicos %}
-    {% for esp in jornada.academicosesp %} 
-	{% for academico in esp.academicos %} 
-	<div class="col-2">
-			
-		<div class="academic">
-            <div class="social-container">
-                <div class="img-container">
-                    <img class="photo-academic" src={{academico.img}} alt={{academico.nombre}}>
-                </div>
-                {% if (academico.lkd is defined and academico.lkd  != "") or (academico.web is defined and academico.web != "")%}
-                <div class="social-menu">
-                
-                    <div class="social-li"><a href="{{academico.lkd}}">
-                    <p class="lnkd-link" >in</p>
-                    </a></div>
-                    <div class="social-li" > <a href="{{academico.web}}">
-                    <p class="web-link">&#9784;</p>
-                    </a></div>
-                
-                </div>
-                {% endif %}
-            </div>
-        
-            <div class="name-academic">
-                {{academico.nombre}}
-            </div>
-            <br>
-            <div class="position-academic">
-                {{academico.posicion}}
-            </div>
-            <br>
-            <div class="phd-academic">
-                {{academico.phd}}
-            </div>
-            <br>
-            <div class="email-academic">
-                {{academico.email}}
-            </div>
-        </div>
-			
-	</div>
-	{% endfor %}
-
-{% endfor %}
-{% endfor %}
-</div>
-</div>
-</div>
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
 <script>
-function filterAcademic() {
-    var input, filter, ul, li, a, i, txtValue;
-    input = document.getElementById("name-academic-filter");
-    filter = input.value.toUpperCase();
-    console.log(filter);
-    ul = document.getElementById("search-academic-container")
-    console.log(ul)
-    li = ul.getElementsByClassName("col-2");
-    console.log(li);
-    for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByClassName("name-academic")[0];
-        txtValue = a.textContent || a.innerText;
-        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            li[i].style.display = "";
-            console.log(txtValue);
-        } else {
-            li[i].style.display = "none";
-            console.log("hide")
-        }
-    }
-    reorderItems();
-}
-</script>
-<script>
-function reorderItems() {
-  var ul = document.getElementById("search-academic-row");
-  var li = ul.getElementsByClassName("col-2");
-  var visibleItems = [];
-  var hiddenItems = [];
-
-  for (var i = 0; i < li.length; i++) {
-    if (li[i].style.display === "none") {
-      hiddenItems.push(li[i]);
-    } else {
-      visibleItems.push(li[i]);
-    }
-  }
-
-  for (var i = 0; i < visibleItems.length; i++) {
-    ul.appendChild(visibleItems[i]);
-  }
-
-  for (var i = 0; i < hiddenItems.length; i++) {
-    ul.appendChild(hiddenItems[i]);
-  }
-}
+    $(document).ready(function() {
+        $('#tabla-repositorio').DataTable();
+    });
 </script>
