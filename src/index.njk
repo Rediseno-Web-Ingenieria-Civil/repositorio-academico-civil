@@ -2,65 +2,66 @@
 layout: base.njk
 title: Repositorio academico
 ---
-<link rel="stylesheet" href="https://cdn.datatables.net/2.1.5/css/dataTables.dataTables.css" />
-<div class="content__description" itemprop="description">
-    <div class="table-responsive">
-        <table id="tabla-repositorio">
-            <thead>
-                <tr>
-                    <th>
-                        Nombre de la publicación
-                    </th>
-                    <th>
-                        Autores
-                    </th>
-                    <th>
-                        Revista
-                    </th>
-                    <th>
-                        DOI
-                    </th>
-                    <th>
-                        Fecha de publicación
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for ano, meses in repositorio_academico %}
-                    {% for mes, papers in meses %}
-                        {% for paper in papers %}
-                            <tr>
-                                <td>
-                                    <a href="{{ paper["LINK PUBLICACION"] }}">{{ paper["NOMBRE DE LA PUBLICACIÓN"] }}</a>
-                                </td>
-                                <td>
-                                    {% for autor in paper["AUTORES"] %}
-                                        {{ autor | trim }}<br>
-                                        {% endfor %}
-                                    </td>
-                                    <td>
-                                        <a href="{{ paper["LINK PUBLICADO EN"] }}">{{ paper["PUBLICADO EN"] }}</a>
-                                    </td>
-                                    <td>
-                                        <a href="{{ paper["LINK DOI"] }}">{{ paper["DOI"] }}</a>
-                                    </td>
-                                    <td>
-                                        {{ paper["MES"] }}
-                                        {{ paper["ANO"] }}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        {% endfor %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
 
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.5/css/dataTables.dataTables.css"/>
+<style>
+    table.dataTable tbody td {
+        word-break: break-word;
+    }
+</style>
+<table id="tabla-repositorio">
+    <thead>
+        <tr>
+            <th>
+                Nombre de la publicación
+            </th>
+            <th>
+                Autores
+            </th>
+            <th>
+                Revista
+            </th>
+            <th>
+                DOI
+            </th>
+            <th>
+                Fecha de publicación
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ano, meses in repositorio_academico %}
+            {% for mes, papers in meses %}
+                {% for paper in papers %}
+                    <tr>
+                        <td>
+                            <a href="{{ paper["LINK PUBLICACION"] }}">{{ paper["NOMBRE DE LA PUBLICACIÓN"] }}</a>
+                        </td>
+                        <td>
+                            {% for autor in paper["AUTORES"] %}
+                                {{ autor | string | trim }}.
+                            {% endfor %}
+                        </td>
+                        <td>
+                            <a href="{{ paper["LINK PUBLICADO EN"] }}">{{ paper["PUBLICADO EN"] }}</a>
+                        </td>
+                        <td>
+                            <a href="{{ paper["LINK DOI"] }}">Ver aquí</a>
+                        </td>
+                        <td>
+                            {{ paper["MES"] }}
+                            {{ paper["ANO"] }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
 <script>
-    $(document).ready(function() {
-        $('#tabla-repositorio').DataTable();
+    $(document).ready(function () {
+        let table = new DataTable('#tabla-repositorio');
     });
 </script>
