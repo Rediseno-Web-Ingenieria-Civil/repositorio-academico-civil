@@ -32,6 +32,21 @@ meses = [
     "Diciembre",
 ]
 
+mes_to_int = {
+    "Enero": 1,
+    "Febrero": 2,
+    "Marzo": 3,
+    "Abril": 4,
+    "Mayo": 5,
+    "Junio": 6,
+    "Julio": 7,
+    "Agosto": 8,
+    "Septiembre": 9,
+    "Octubre": 10,
+    "Noviembre": 11,
+    "Diciembre": 12,
+}
+
 mes_inicial = "Enero" # @param ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"]
 ano_inicial = 2022 # @param {"type":"slider","min":2020,"max":2040,"step":1}
 
@@ -71,12 +86,12 @@ if names_failed:
     print("Error: Al menos una hoja no cumple con el formato de nombre 'Mes año'")
     exit()
 
-# repositorio_data = pd.DataFrame()
 repositorio_data = {}
-for ano in range(ano_inicial, ano_final+1):
-    # ano_data = pd.DataFrame()
+# for ano in range(ano_inicial, ano_final+1):
+for ano in range(ano_final, ano_inicial-1, -1):
     ano_data = {}
-    for mes in meses:
+    # for mes in meses:
+    for mes in meses[::-1]:
         if ano == ano_inicial and mes not in meses[meses.index(mes_inicial):]:
             continue
         if ano == ano_final and mes not in meses[:meses.index(mes_final)+1]:
@@ -162,16 +177,15 @@ for ano in range(ano_inicial, ano_final+1):
         grouped_df["ANO"] = ano
 
         # Drop column FECHA
-        grouped_df.drop(columns=["FECHA"], inplace=True)
+        # grouped_df.drop(columns=["FECHA"], inplace=True)
+        grouped_df["FECHA"] = f'{ano}-{mes_to_int[mes]:02d}-01'
 
         # Append to ano_data
         ano_data[f"{mes}"] = grouped_df.to_dict(orient="records")
     
     # Append to repositorio_data
-    repositorio_data[f"{ano}"] = ano_data
+    # + " " to avoid javascript sorting the keys
+    repositorio_data[f"{ano}"+" "] = ano_data
 
 with open("src/data/repositorio_academico.json", "w") as f:
     json.dump(repositorio_data, f, ensure_ascii=False, indent=4)
-
-    
-

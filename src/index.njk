@@ -3,10 +3,26 @@ layout: base.njk
 title: Repositorio academico
 ---
 
-<link rel="stylesheet" href="https://cdn.datatables.net/2.1.5/css/dataTables.dataTables.css"/>
+<link href="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.1.6/rg-1.5.0/datatables.min.css" rel="stylesheet"/>
 <style>
     table.dataTable tbody td {
-        word-break: break-word;
+        word-break: break-all;
+    }
+    table.dataTable tr.dtrg-group.dtrg-start.dtrg-level-0 th {
+        color: #2d2d2d !important;
+        background-color: rgba(0, 0, 0, 0.1) !important;
+    }
+    .content__description table tr:first-child td,
+    .content__description table tr:first-child td > * {
+        background-color: rgba(230, 230, 230, 0.5);
+        color: inherit;
+        font-weight: inherit;
+    }
+    .content__description table tr:first-child td a {
+        color: #da291c;
+    }
+    .table-responsive {
+        overflow-x: visible;
     }
 </style>
 <table id="tabla-repositorio">
@@ -38,9 +54,13 @@ title: Repositorio academico
                             <a href="{{ paper["LINK PUBLICACION"] }}">{{ paper["NOMBRE DE LA PUBLICACIÓN"] }}</a>
                         </td>
                         <td>
-                            {% for autor in paper["AUTORES"] %}
-                                {{ autor | string | trim }}.
-                            {% endfor %}
+                            {% if paper["AUTORES"] is string %}
+                                {{ paper["AUTORES"] | trim }}
+                            {% else %}
+                                {% for autor in paper["AUTORES"] %}
+                                    {{ autor | string | trim }}.
+                                {% endfor %}
+                            {% endif %}
                         </td>
                         <td>
                             <a href="{{ paper["LINK PUBLICADO EN"] }}">{{ paper["PUBLICADO EN"] }}</a>
@@ -48,20 +68,26 @@ title: Repositorio academico
                         <td>
                             <a href="{{ paper["LINK DOI"] }}">Ver aquí</a>
                         </td>
-                        <td>
-                            {{ paper["MES"] }}
-                            {{ paper["ANO"] }}
-                        </td>
+                        <td>{{ paper["MES"] | string | trim }}
+                            {{ paper["ANO"] | string | trim }}</td>
                     </tr>
                 {% endfor %}
             {% endfor %}
         {% endfor %}
     </tbody>
 </table>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/2.1.5/js/dataTables.js"></script>
+<script src="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.1.6/rg-1.5.0/datatables.min.js"></script>
 <script>
     $(document).ready(function () {
-        let table = new DataTable('#tabla-repositorio');
+        let table = new DataTable('#tabla-repositorio', {
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/2.1.5/i18n/es-CL.json'
+            },
+            rowGroup: {
+                dataSrc: 4
+            },
+            ordering: false,
+            pageLength: 100
+        });
     });
 </script>
