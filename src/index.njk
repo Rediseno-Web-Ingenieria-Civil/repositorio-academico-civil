@@ -32,6 +32,9 @@ title: Repositorio academico
                 Nombre de la publicación
             </th>
             <th>
+                Área
+            </th>
+            <th>
                 Autores
             </th>
             <th>
@@ -52,6 +55,11 @@ title: Repositorio academico
                     <tr>
                         <td>
                             <a href="{{ paper["LINK PUBLICACION"] }}">{{ paper["NOMBRE DE LA PUBLICACIÓN"] }}</a>
+                        </td>
+                        <td>
+                            {% if paper["AREA"] is string %}
+                                {{ paper["AREA"] | trim }}
+                            {% endif %}
                         </td>
                         <td>
                             {% if paper["AUTORES"] is string %}
@@ -84,7 +92,7 @@ title: Repositorio academico
                 url: 'https://cdn.datatables.net/plug-ins/2.1.5/i18n/es-CL.json'
             },
             rowGroup: {
-                dataSrc: 4
+                dataSrc: 5
             },
             ordering: false,
             pageLength: 100
