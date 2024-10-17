@@ -1,30 +1,91 @@
----
-layout: base.njk
+{# ---
+layout: seminarios_civil.njk
 title: Repositorio academico
----
+--- #}
 
-<link href="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.1.6/rg-1.5.0/datatables.min.css" rel="stylesheet"/>
 <style>
-    table.dataTable tbody td {
-        word-break: break-word;
-    }
-    table.dataTable tr.dtrg-group.dtrg-start.dtrg-level-0 th {
-        color: #2d2d2d !important;
-        background-color: rgba(0, 0, 0, 0.1) !important;
-    }
-    .content__description table tr:first-child td,
-    .content__description table tr:first-child td > * {
-        background-color: rgba(230, 230, 230, 0.5);
+    #tabla-repositorio tr:first-child td,
+    #tabla-repositorio tr:first-child td > * {
+        background-color: #E6E6E680;
         color: inherit;
         font-weight: inherit;
     }
-    .content__description table tr:first-child td a {
+    #tabla-repositorio {
+        font-size: 14px;
+    }
+    #tabla-repositorio tbody tr {
+        background-color: #E6E6E680;
+    }
+    #tabla-repositorio tbody tr:nth-child(even) {
+        background-color: #A1A1A180;
+    }
+    #tabla-repositorio tbody tr:first-child td a {
         color: #da291c;
     }
-    div.dt-container .dt-search input {
-        margin-left: none;
+    #search-bar {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+    #search-input {
+        width: 80%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+    }
+    #search-button {
+        width: 10%;
+        height: 40px;
+        background-color: #4caf50;
+        color: #fff;
+        padding: 2px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    #clear-button {
+        width: 10%;
+        height: 40px;
+        background-color: #f44336;
+        color: #fff;
+        padding: 2px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .repositorio-filter {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .repositorio-filter label {
+        margin-right: 10px;
+    }
+    .repositorio-filter input {
+        width: unset;
+        height: unset;
+        -webkit-appearance: auto;
     }
 </style>
+
+<div class="repositorio-filter">
+    <label>
+        <input type="checkbox" id="all" name="all" value="all" checked/> Todos
+    </label>
+    {% for area in areas %}
+        <label>
+            <input type="checkbox" id="{{ area }}" name="{{ area }}" value="{{ area }}" checked/> {{ area }}
+        </label>
+    {% endfor %}
+</div>
+<div id="search-bar">
+    <input type="text" id="search-input" placeholder="Buscar publicación por nombre, área, autor/a, revista, fecha"/>
+    <button id="search-button" onclick="filterRepositorio()">Buscar</button>
+    <button id="clear-button" onclick="clearFilter()">Limpiar</button>
+</div>
 <table id="tabla-repositorio">
     <thead>
         <tr>
@@ -84,42 +145,88 @@ title: Repositorio academico
         {% endfor %}
     </tbody>
 </table>
-<script src="https://cdn.datatables.net/v/dt/jq-3.7.0/dt-2.1.6/rg-1.5.0/datatables.min.js"></script>
 <script>
-    $(document).ready(function () {
-        let table = new DataTable('#tabla-repositorio', {
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/2.1.5/i18n/es-CL.json'
-            },
-            rowGroup: {
-                dataSrc: 5
-            },
-            ordering: false,
-            pageLength: 50,
-            columnDefs: [
-                {
-                    width: '20%',
-                    targets: 0
-                },
-                {
-                    width: '10%',
-                    targets: 1
-                },
-                {
-                    width: '20%',
-                    targets: 2
-                },
-                {
-                    width: '20%',
-                    targets: 3
-                }, {
-                    width: '6%',
-                    targets: 4
-                }, {
-                    width: '14%',
-                    targets: 5
+    const input = document.getElementById("search-input");
+    const rows = document.querySelectorAll("#tabla-repositorio tbody tr");
+    const apply_zebra = (rows) => {
+        let count = 0;
+        rows.forEach(row => {
+            if (row.style.display !== 'none') {
+                count++;
+            }
+            if (count % 2 === 0) {
+                row.style.backgroundColor = '#A1A1A180';
+            } else {
+                row.style.backgroundColor = '#E6E6E680';
+            }
+        });
+    };
+    let filterRepositorio = () => {
+        let filter,
+            textValue;
+        filter = input
+            .value
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, "")
+            .toUpperCase();
+        rows.forEach((row) => {
+            textValue = row.textContent || row.innerText;
+            textValue = textValue
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, "")
+                .toUpperCase();
+            if (textValue.indexOf(filter) > -1) {
+                row.style.display = "";
+            } else {
+                row.style.display = "none";
+            }
+        });
+        apply_zebra(rows);
+    };
+    let clearFilter = () => {
+        input.value = "";
+        rows.forEach((row) => {
+            row.style.display = "";
+        });
+        apply_zebra(rows);
+    };
+
+    const repositorio_table = document.getElementById('tabla-repositorio');
+    const all_checkbox = document.getElementById('all');
+    const otherCheckboxes = document.querySelectorAll('input[type="checkbox"]:not(#all)');
+
+    all_checkbox.addEventListener('change', function () {
+        otherCheckboxes.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+        const rows = document.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            row.style.display = this.checked
+                ? ''
+                : 'none';
+        });
+        apply_zebra(rows);
+    });
+    otherCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const tipo = this.value;
+            const checkedTypes = Array.from(otherCheckboxes).filter(cb => cb.checked);
+            if (checkedTypes.length === otherCheckboxes.length) {
+                all_checkbox.checked = true;
+            } else {
+                all_checkbox.checked = false;
+            }
+            const rows = document.querySelectorAll('tbody tr');
+            let count = 0;
+            rows.forEach(row => {
+                const firstTd = row.querySelector('td:nth-child(2)');
+                if (firstTd && firstTd.textContent.trim() === tipo) {
+                    row.style.display = this.checked
+                        ? ''
+                        : 'none';
                 }
-            ]
+            });
+            apply_zebra(rows);
         });
     });
 </script>
