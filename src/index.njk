@@ -190,6 +190,11 @@ title: Repositorio academico
         });
         apply_zebra(rows);
     };
+    input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            filterRepositorio();
+        }
+    });
 
     const repositorio_table = document.getElementById('tabla-repositorio');
     const all_checkbox = document.getElementById('all');
