@@ -68,18 +68,14 @@ title: Repositorio academico
         width: unset;
         height: unset;
         -webkit-appearance: auto;
+        margin-right: 0.25em;
     }
 </style>
 
-<div class="repositorio-filter">
+<div id="repositorio-filter" class="repositorio-filter">
     <label>
-        <input type="checkbox" id="all" name="all" value="all" checked/> Todos
+        <input type="checkbox" id="all" name="all" value="all" checked/>Todos
     </label>
-    {% for area in areas %}
-        <label>
-            <input type="checkbox" id="{{ area }}" name="{{ area }}" value="{{ area }}" checked/> {{ area }}
-        </label>
-    {% endfor %}
 </div>
 <div id="search-bar">
     <input type="text" id="search-input" placeholder="Buscar publicación por nombre, área, autor/a, revista, fecha"/>
@@ -148,6 +144,37 @@ title: Repositorio academico
 <script>
     const input = document.getElementById("search-input");
     const rows = document.querySelectorAll("#tabla-repositorio tbody tr");
+
+    const unique_areas = new Set();
+    rows.forEach(row => {
+        const areaTd = row.querySelector('td:nth-child(2)');
+        if (areaTd) {
+            areaTd.textContent = areaTd
+                .textContent
+                .trim() || 'Otros';
+            const text = areaTd
+                .textContent
+                .trim();
+            const row_areas = text.split('&');
+            row_areas.forEach(area => {
+                unique_areas.add(area.trim());
+            });
+        }
+    });
+
+    unique_areas.forEach(area => {
+        const label = document.createElement('label');
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.value = area;
+        input.checked = true;
+        label.appendChild(input);
+        label.appendChild(document.createTextNode(area));
+        document
+            .querySelector('.repositorio-filter')
+            .appendChild(label);
+    });
+
     const apply_zebra = (rows) => {
         let count = 0;
         rows.forEach(row => {
@@ -195,7 +222,8 @@ title: Repositorio academico
             filterRepositorio();
         }
     });
-
+</script>
+<script>
     const repositorio_table = document.getElementById('tabla-repositorio');
     const all_checkbox = document.getElementById('all');
     const otherCheckboxes = document.querySelectorAll('input[type="checkbox"]:not(#all)');
@@ -215,7 +243,9 @@ title: Repositorio academico
     otherCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function () {
             const tipo = this.value;
-            const checkedTypes = Array.from(otherCheckboxes).filter(cb => cb.checked);
+            const checkedTypes = Array
+                .from(otherCheckboxes)
+                .filter(cb => cb.checked);
             if (checkedTypes.length === otherCheckboxes.length) {
                 all_checkbox.checked = true;
             } else {
